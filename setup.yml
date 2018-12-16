@@ -1,0 +1,54 @@
+---
+- name: Add Java8 repo to apt
+  apt_repository: repo='ppa:openjdk-r/ppa'
+  tags:
+    - install
+  become: yes
+  become_method: sudo
+
+- name: Add WebUpd8 apt repo
+  apt_repository: repo='ppa:webupd8team/java'
+
+- name: Accept Java license
+  debconf: name=oracle-java8-installer question='shared/accepted-oracle-license-v1-1' value=true vtype=select
+
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Install Java 8
+  apt: name=oracle-java8-installer state=latest
+
+- name: Set Java environment variables
+  apt: name=oracle-java8-set-default state=latest
+
+- name: System Setup
+  apt: pkg="{{ item }}" state=installed update-cache=yes
+  with_items:
+    - wget
+    - vim
+    - curl
+  tags:
+    - install
+  become: yes
+  become_method: sudo
+
+- name: set user bin directory
+  set_fact:
+    user_bin_dir: /usr/bin
+
+- name: download leiningen
+  get_url:
+    url:  https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+    dest: "{{ user_bin_dir }}"
+
+- name: add executable permission for lein script
+  file:
+    path: "{{ user_bin_dir }}/lein"
+    mode: "a+x"
+  become: yes
+  become_method: sudo
+
+- name: Install Clj-Boot
+  shell: bash -c "cd /usr/local/bin && curl -fsSLo boot https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh && chmod 755 boot"
+  become: yes
+  become_method: sudo
