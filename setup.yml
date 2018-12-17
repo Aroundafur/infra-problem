@@ -4,63 +4,59 @@
   connection: local
   tasks:
   - name: check out a git repository
-    git:
-      repo: git@github.com:Aroundafur/infra-problem.git
-      version: master
-      dest: /opt/infra-problem
-      accept_hostkey: yes
-    # ssh-agent doesn't allow key to pass through remote sudo commands.
-    become: no
+	git:
+  	repo: git@github.com:Aroundafur/infra-problem.git
+  	version: master
+  	dest: infra-problem
+  	accept_hostkey: yes
+
+	# ssh-agent doesn't allow key to pass through remote sudo commands.
+	become: no
+
   - name: Add Java8 repo to apt
-    apt_repository: repo='ppa:openjdk-r/ppa'
-    tags:
-      - install
-    become: yes
-    become_method: sudo
+	apt_repository: repo='ppa:openjdk-r/ppa'
+	tags:
+  	- install
+	become: yes
+	become_method: sudo
 
-  - name: Add WebUpd8 apt repo
-    apt_repository: repo='ppa:webupd8team/java'
+  - name: Install add-apt-repostory
+	become: yes
+	apt: name=software-properties-common state=latest
 
-  - name: Accept Java license
-    debconf: name=oracle-java8-installer question='shared/accepted-oracle-license-v1-1' value=true vtype=select
+  - name: Add Oracle Java Repository
+	become: yes
+	apt_repository: repo='ppa:webupd8team/java'
 
-  - name: Update apt cache
-    apt: update_cache=yes
+  - name: Accept Java 8 License
+	become: yes
+	debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
 
-  - name: Install Java 8
-    apt: name=oracle-java8-installer state=latest
-
-  - name: Set Java environment variables
-    apt: name=oracle-java8-set-default state=latest
-
-  - name: System Setup
-    apt: pkg="{{ item }}" state=installed update-cache=yes
-    with_items:
-      - wget
-      - vim
-      - curl
-    tags:
-      - install
-    become: yes
-    become_method: sudo
+  - name: Install Oracle Java 8
+	become: yes
+	apt: name={{item}} state=latest
+	with_items:
+  	- oracle-java8-installer
+  	- ca-certificates
+  	- oracle-java8-set-default
 
   - name: set user bin directory
-    set_fact:
-      user_bin_dir: /usr/bin
+	set_fact:
+  	user_bin_dir: /usr/bin
 
   - name: download leiningen
-    get_url:
-      url:  https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
-      dest: "{{ user_bin_dir }}"
+	get_url:
+  	url:  https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+  	dest: "{{ user_bin_dir }}"
 
   - name: add executable permission for lein script
-    file:
-      path: "{{ user_bin_dir }}/lein"
-      mode: "a+x"
-    become: yes
-    become_method: sudo
+	file:
+  	path: "{{ user_bin_dir }}/lein"
+  	mode: "a+x"
+	become: yes
+	become_method: sudo
 
   - name: Install Clj-Boot
-    shell: bash -c "cd /usr/local/bin && curl -fsSLo boot https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh && chmod 755 boot"
-    become: yes
-    become_method: sudo
+	shell: bash -c "cd /usr/local/bin && curl -fsSLo boot https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh && chmod 755 boot"
+	become: yes
+	become_method: sudo
