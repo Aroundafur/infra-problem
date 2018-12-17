@@ -44,10 +44,9 @@ Resources:
         apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
         sudo apt-add-repository ppa:ansible/ansible
         sudo apt-get update
-        sudo apt-get install -y ansible git
-        git clone https://github.com/Aroundafur/infra-problem.git
-        cd infra-problem
-        ansible-plabook -i hosts setup.yml
+        sudo apt-get install -y ansible
+        ansible-playbook --connection=local 127.0.0.1 setup.yml
+        cd /opt/infra-problem
         make libs
         cd front-end/public
         ./serve.py

@@ -57,3 +57,22 @@ All the apps take environment variables to configure them and expose the URL `/p
 
 * `APP_PORT`: The port on which to run the app
 
+*Prerequisites*
+
+
+Here are the prerequisites for this solution:
+
+* AWS Account: Follow these instructions to create an AWS Account: Creating an AWS Account.
+* EC2 Key Pair: Follow these instructions to create an EC2 Key Pair: Creating Your Key Pair Using Amazon EC2.
+please setup your key pair in the ec2-parameters.json
+
+*Architecture and Implementation*
+* CloudFormation: All of the resource generation of this solution is described in CloudFormation  which is a declarative code language that can be written in JSON or YAML.
+
+* Ansible: Within the provisioned instance run Ansible tasks
+
+*Running the solution*
+run bash script cf-deploy.sh, go to cloudformation, in us-east-1 and review the stack that was created. 
+in the output you'll find the instance public ip.
+
+
