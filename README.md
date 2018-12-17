@@ -72,7 +72,14 @@ please setup your key pair in the ec2-parameters.json
 * Ansible: Within the provisioned instance run Ansible tasks
 
 *Running the solution*
-run bash script cf-deploy.sh, go to cloudformation, in us-east-1 and review the stack that was created. 
-in the output you'll find the instance public ip.
+* run bash script cf-deploy.sh
+* go to cloudformation, in us-east-1, review the stack that was created. 
+* in the output you'll find the instance public ip.
 
+*Next steps*
+Continoues integration either via aws' suite:
+* CodeCommit: With the addition of the AWS::CodeCommit::Repository resource, you can define your CodeCommit Git repositories in CloudFormation.
+* CodeDeploy: CodeDeploy automates the deployment to the EC2 instance that was provisioned by the nested stack.
+* CodePipeline: Define CodePipeline’s stages and actions in CloudFormation code which includes using CodeCommit as a Source action and CodeDeploy for a Deploy action (For more information, see Action Structure Requirements in AWS CodePipeline).
 
+Or via one of the popular CI/CD tools like Jenkins.
